@@ -1,0 +1,4 @@
+fastapi
+uvicorn
+python-dotenv
+# Add any other dependencies your project uses
