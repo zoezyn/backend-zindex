@@ -15,7 +15,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Define data models
+# Define data models 
 class KindleContent(BaseModel):
     content: str
 
