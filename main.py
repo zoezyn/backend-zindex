@@ -19,9 +19,6 @@ app.add_middleware(
 class KindleContent(BaseModel):
     content: str
 
-# class BookNote(BaseModel):
-#     title: str
-#     notes: List[str]
 
 def process_kindle_notes(content: str) -> dict:
     books = {}
