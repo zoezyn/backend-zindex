@@ -70,7 +70,7 @@ def process_kindle_notes(content: str) -> dict:
                     last_note = books[book_title][-1][0]
                     last_note_loc_text = books[book_title][-1][1]
                     last_note_loc = get_location_numbers(last_note_loc_text.split('|')[-2])
-                    if last_note_loc[0] == current_loc[0]:
+                    if last_note_loc[0] == current_loc[0] and last_note_loc[0] !=last_note_loc[1]:
                         should_add = False
                         if current_loc[1] >= last_note_loc[1]:
                             #directly replace the last note with the current note
@@ -87,6 +87,8 @@ def process_kindle_notes(content: str) -> dict:
                         new_location = last_note_loc_text.replace(f"{last_note_loc[0]}-{last_note_loc[1]}", new_location_range)
                         books[book_title][-1] = (combined_note, new_location)
 
+                    elif current_loc[0]> last_note_loc[0] and current_loc[1] <= last_note_loc[1] and current_loc[0]!=current_loc[1]:
+                        should_add = False
                 # break
                 if should_add and note_key not in seen:
                     seen.add(note_key)
