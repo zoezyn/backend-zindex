@@ -36,6 +36,9 @@ def process_kindle_notes(content: str) -> dict:
             return (int(numbers[0]), int(numbers[1]) if len(numbers) > 1 else int(numbers[0]))
         return (0, 0)
     
+    def has_chinese(text):
+        return any('\u4e00' <= char <= '\u9fff' for char in text)
+    
     for section in sections:
         if section.strip():
 
@@ -61,14 +64,28 @@ def process_kindle_notes(content: str) -> dict:
 
                 # Check if the last note has the same start location
                 should_add = True
+
+                
                 if len(books[book_title]) > 0:
+                    last_note = books[book_title][-1][0]
                     last_note_loc_text = books[book_title][-1][1]
                     last_note_loc = get_location_numbers(last_note_loc_text.split('|')[-2])
                     if last_note_loc[0] == current_loc[0]:
                         should_add = False
-                        if last_note_loc[1] < current_loc[1]:
+                        if current_loc[1] >= last_note_loc[1]:
                             #directly replace the last note with the current note
                             books[book_title][-1] = (book_notes, note_location)
+
+                    
+                    elif last_note_loc[1] == current_loc[0] and not last_note.rstrip().endswith(('.', '。')):
+                        print("last_note: ",last_note)
+                        should_add = False
+
+                        separator = "" if has_chinese(last_note) else " "
+                        combined_note = last_note + separator + book_notes
+                        new_location_range = f"{last_note_loc[0]}-{current_loc[1]}"
+                        new_location = last_note_loc_text.replace(f"{last_note_loc[0]}-{last_note_loc[1]}", new_location_range)
+                        books[book_title][-1] = (combined_note, new_location)
 
                 # break
                 if should_add and note_key not in seen:
